@@ -78,6 +78,15 @@ def _gemini_available() -> bool:
     adc = Path.home() / ".config" / "gcloud" / "application_default_credentials.json"
     if adc.is_file():
         return True
+    # On Cloud Run, there is no API key or ADC file. The service
+    # account gets Vertex tokens from the metadata server instead.
+    # deploy.sh sets GOOGLE_GENAI_USE_VERTEXAI=TRUE and
+    # GOOGLE_CLOUD_PROJECT, and Cloud Run sets K_SERVICE.
+    if os.environ.get("GOOGLE_CLOUD_PROJECT"):
+        if os.environ.get("GOOGLE_GENAI_USE_VERTEXAI", "").lower() in ("1", "true", "yes"):
+            return True
+        if os.environ.get("K_SERVICE"):
+            return True
     return False
 
 
