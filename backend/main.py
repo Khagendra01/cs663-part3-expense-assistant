@@ -27,6 +27,7 @@ from typing import Any, Dict, List, Optional
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from settings import get_settings
@@ -39,6 +40,19 @@ DEFAULT_USER_ID = "demo-user"
 DEFAULT_SESSION_ID = "demo-session"
 
 app = FastAPI(title="CS663 Part 3 Expense Assistant backend")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://khagendra01.github.io",
+        "https://muse.ai",
+        "http://localhost:7860",
+        "http://localhost:8081",
+    ],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["*"],
+)
 
 
 class ChatRequest(BaseModel):
