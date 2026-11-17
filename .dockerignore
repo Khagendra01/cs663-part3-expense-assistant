@@ -1,0 +1,13 @@
+# Keep the venv, caches, local secrets, and local database out of the image.
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.git/
+settings.yaml
+.env
+data/expenses.db
+data/receipts/*.png
+data/receipts/*.jpg
+data/receipts/*.jpeg
+deploy/

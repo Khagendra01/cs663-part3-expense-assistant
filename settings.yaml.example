@@ -1,0 +1,8 @@
+# Copy this file to settings.yaml and edit the project id if needed.
+# Do not put an API key in this file.
+GCLOUD_LOCATION: "us-central1"
+GCLOUD_PROJECT_ID: "cs663-dog-training"
+DB_PATH: "data/expenses.db"
+RECEIPTS_DIR: "data/receipts"
+CURRENCY: "USD"
+BACKEND_URL: "http://localhost:8081/chat"

@@ -1,0 +1,97 @@
+[
+  {
+    "receipt_id": "trader-joes-20261110",
+    "store_name": "Trader Joe's",
+    "transaction_time": "2026-11-10T14:32:00.000000Z",
+    "total_amount": 42.18,
+    "currency": "USD",
+    "items": [
+      {
+        "name": "Organic Bananas",
+        "price": 3.49,
+        "quantity": 1
+      },
+      {
+        "name": "Whole Milk",
+        "price": 4.29,
+        "quantity": 1
+      },
+      {
+        "name": "Sourdough Bread",
+        "price": 4.99,
+        "quantity": 1
+      },
+      {
+        "name": "Chicken Breast",
+        "price": 12.49,
+        "quantity": 1
+      },
+      {
+        "name": "Avocados",
+        "price": 5.99,
+        "quantity": 1
+      },
+      {
+        "name": "Coffee Beans",
+        "price": 10.93,
+        "quantity": 1
+      }
+    ],
+    "file": "trader-joes-2026-11-10.png"
+  },
+  {
+    "receipt_id": "starbucks-20261112",
+    "store_name": "Starbucks",
+    "transaction_time": "2026-11-12T09:15:00.000000Z",
+    "total_amount": 6.45,
+    "currency": "USD",
+    "items": [
+      {
+        "name": "Grande Pike Place Coffee",
+        "price": 3.45,
+        "quantity": 1
+      },
+      {
+        "name": "Blueberry Muffin",
+        "price": 3.0,
+        "quantity": 1
+      }
+    ],
+    "file": "starbucks-2026-11-12.png"
+  },
+  {
+    "receipt_id": "target-20261114",
+    "store_name": "Target",
+    "transaction_time": "2026-11-14T18:05:00.000000Z",
+    "total_amount": 87.2,
+    "currency": "USD",
+    "items": [
+      {
+        "name": "Notebook",
+        "price": 12.99,
+        "quantity": 1
+      },
+      {
+        "name": "Water Bottle",
+        "price": 18.49,
+        "quantity": 1
+      },
+      {
+        "name": "T-Shirt",
+        "price": 15.0,
+        "quantity": 1
+      },
+      {
+        "name": "Headphones",
+        "price": 29.99,
+        "quantity": 1
+      },
+      {
+        "name": "Snacks",
+        "price": 10.73,
+        "quantity": 1
+      }
+    ],
+    "file": "target-2026-11-14.png"
+  }
+]
