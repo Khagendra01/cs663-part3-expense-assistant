@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Personal Expense Assistant - CS663 Part 3 Option 3</title>
+<style>
+body { font-family: Arial, Helvetica, sans-serif; max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.5; color: #111; }
+h1 { font-size: 28px; }
+h2 { font-size: 20px; margin-top: 28px; }
+button { padding: 10px 14px; margin: 4px 4px 4px 0; cursor: pointer; font-size: 15px; }
+input[type=text] { width: 100%; padding: 10px; font-size: 16px; box-sizing: border-box; }
+#chat { border: 1px solid #999; padding: 12px; min-height: 180px; margin: 12px 0; background: #f7f7f7; }
+#chat p { margin: 8px 0; }
+table { border-collapse: collapse; width: 100%; margin-top: 8px; }
+th, td { border: 1px solid #999; padding: 8px; text-align: left; }
+.note { background: #fff8d6; border: 1px solid #d8c56a; padding: 10px; }
+img.preview { max-width: 320px; display: block; margin-top: 8px; }
+</style>
+</head>
+<body>
+<h1>Personal Expense Assistant</h1>
+<p>Khagendra Khatri<br>
+Nov 17, 2026<br>
+CS663 Computer Vision<br>
+Part 3, Option 3</p>
+
+<p>I built this with the Google Agent Development Kit and Gemini 2.5 Flash. I upload a receipt photo, the agent reads the store, date, items and total, and saves it. Then I can ask how much I spent, at one store or in total.</p>
+
+<p class="note" id="status">Status: this page first tries the live backend. If the live call fails, it shows the sample answer below and says so. No API key is in this page.</p>
+
+<h2>Chat</h2>
+<div id="chat"><p><b>Assistant:</b> Hi. Upload a receipt, or try a sample below.</p></div>
+<input type="text" id="msg" placeholder="Type a question, for example: What is my total spending in November?">
+<p>
+<button onclick="sendMsg()">Send</button>
+<button onclick="showReceipts()">Show stored receipts</button>
+</p>
+<p>
+<label>Receipt photo: <input type="file" id="img" accept="image/*"></label>
+<img class="preview" id="preview" alt="">
+</p>
+
+<h2>Sample receipts</h2>
+<p>Tap one to run it through the demo.</p>
+<button onclick="runSample('target')">Target, Nov 14, 2026, $87.20</button>
+<button onclick="runSample('trader')">Trader Joe's, Nov 10, 2026, $42.18</button>
+<button onclick="runSample('starbucks')">Starbucks, Nov 12, 2026, $6.45</button>
+
+<h2>Stored receipts</h2>
+<table>
+<tr><th>Store</th><th>Date</th><th>Items</th><th>Total</th></tr>
+<tr><td>Trader Joe's</td><td>2026-11-10</td><td>6</td><td>$42.18</td></tr>
+<tr><td>Starbucks</td><td>2026-11-12</td><td>2</td><td>$6.45</td></tr>
+<tr><td>Target</td><td>2026-11-14</td><td>5</td><td>$87.20</td></tr>
+<tr><td><b>Total, November 2026</b></td><td></td><td><b>3 receipts</b></td><td><b>$135.83</b></td></tr>
+</table>
+
+<h2>Demo steps</h2>
+<p>1. Tap Target above, or upload its receipt photo.<br>
+2. Ask: How much did I spend at Target?<br>
+3. Ask: What is my total spending in November?</p>
+
+<h2>Links</h2>
+<p>Live backend (Cloud Run): <a href="https://cs663-expense-assistant-htdn76co5a-uc.a.run.app/health">https://cs663-expense-assistant-htdn76co5a-uc.a.run.app</a><br>
+Code on GitHub: <a href="https://github.com/Khagendra01/cs663-part3-expense-assistant">https://github.com/Khagendra01/cs663-part3-expense-assistant</a></p>
+
+<p>Note on the live backend: the backend has no CORS set up, so a page on github.io cannot call its /chat endpoint from a browser. The live backend itself works, and /health returns ok. This page tries the live call first and falls back to the sample answer when the browser blocks it.</p>
+
+<script>
+var BACKEND = "https://cs663-expense-assistant-htdn76co5a-uc.a.run.app";
+var samples = {
+  target: {store: "Target", date: "2026-11-14", total: 87.20, items: 5, text: "Stored Target, Nov 14, 2026, $87.20, 5 items."},
+  trader: {store: "Trader Joe's", date: "2026-11-10", total: 42.18, items: 6, text: "Stored Trader Joe's, Nov 10, 2026, $42.18, 6 items."},
+  starbucks: {store: "Starbucks", date: "2026-11-12", total: 6.45, items: 2, text: "Stored Starbucks, Nov 12, 2026, $6.45, 2 items."}
+};
+function addMsg(who, text) {
+  var c = document.getElementById("chat");
+  var p = document.createElement("p");
+  p.innerHTML = "<b>" + who + ":</b> " + text;
+  c.appendChild(p);
+}
+function sampleAnswer(q) {
+  q = q.toLowerCase();
+  if (q.indexOf("target") !== -1) return "You spent $87.20 at Target, on Nov 14, 2026, 5 items.";
+  if (q.indexOf("trader") !== -1) return "You spent $42.18 at Trader Joe's, on Nov 10, 2026, 6 items.";
+  if (q.indexOf("starbucks") !== -1) return "You spent $6.45 at Starbucks, on Nov 12, 2026, 2 items.";
+  if (q.indexOf("total") !== -1 || q.indexOf("november") !== -1) return "Your total spending in November 2026 is $135.83 across 3 receipts: Trader Joe's $42.18, Starbucks $6.45, Target $87.20.";
+  if (q.indexOf("receipt") !== -1) return "Stored receipts: Trader Joe's $42.18, Starbucks $6.45, Target $87.20. Total $135.83.";
+  return "Sample answer: your total spending in November 2026 is $135.83 across 3 receipts.";
+}
+async function tryLive(message, imageBase64, imageFilename) {
+  var body = {message: message};
+  if (imageBase64) { body.image_base64 = imageBase64; body.image_filename = imageFilename; }
+  var res = await fetch(BACKEND + "/chat", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
+  if (!res.ok) throw new Error("live backend returned " + res.status);
+  var data = await res.json();
+  return data.reply || JSON.stringify(data);
+}
+async function sendMsg() {
+  var input = document.getElementById("msg");
+  var q = input.value.trim();
+  if (!q) return;
+  addMsg("You", q);
+  input.value = "";
+  var file = document.getElementById("img").files[0];
+  var b64 = null, name = null;
+  if (file) {
+    name = file.name;
+    b64 = await new Promise(function(resolve) {
+      var r = new FileReader();
+      r.onload = function() { resolve(r.result.split(",")[1]); };
+      r.readAsDataURL(file);
+    });
+    document.getElementById("preview").src = URL.createObjectURL(file);
+  }
+  try {
+    var reply = await tryLive(q, b64, name);
+    document.getElementById("status").textContent = "Status: live backend answered.";
+    addMsg("Assistant (live)", reply);
+  } catch (e) {
+    document.getElementById("status").textContent = "Status: live backend call failed from this page (the backend blocks cross-site browser calls), so this is the sample answer.";
+    addMsg("Assistant (sample answer, live call failed)", sampleAnswer(q));
+  }
+}
+async function runSample(key) {
+  var s = samples[key];
+  addMsg("You", "Please store this receipt");
+  try {
+    var reply = await tryLive("Please store this receipt", null, null);
+    document.getElementById("status").textContent = "Status: live backend answered.";
+    addMsg("Assistant (live)", reply);
+  } catch (e) {
+    document.getElementById("status").textContent = "Status: live backend call failed from this page (the backend blocks cross-site browser calls), so this is the sample answer.";
+    addMsg("Assistant (sample answer, live call failed)", s.text);
+  }
+}
+function showReceipts() {
+  addMsg("Assistant (sample answer)", "Stored receipts: Trader Joe's $42.18, Starbucks $6.45, Target $87.20. Total $135.83.");
+}
+document.getElementById("msg").addEventListener("keydown", function(e) { if (e.key === "Enter") sendMsg(); });
+</script>
+</body>
+</html>
