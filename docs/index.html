@@ -5,68 +5,148 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Personal Expense Assistant - CS663 Part 3 Option 3</title>
 <style>
-body { font-family: Arial, Helvetica, sans-serif; max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.5; color: #111; }
-h1 { font-size: 28px; }
-h2 { font-size: 20px; margin-top: 28px; }
-button { padding: 10px 14px; margin: 4px 4px 4px 0; cursor: pointer; font-size: 15px; }
-input[type=text] { width: 100%; padding: 10px; font-size: 16px; box-sizing: border-box; }
-#chat { border: 1px solid #999; padding: 12px; min-height: 180px; margin: 12px 0; background: #f7f7f7; }
-#chat p { margin: 8px 0; }
-table { border-collapse: collapse; width: 100%; margin-top: 8px; }
-th, td { border: 1px solid #999; padding: 8px; text-align: left; }
-.note { background: #fff8d6; border: 1px solid #d8c56a; padding: 10px; }
-img.preview { max-width: 320px; display: block; margin-top: 8px; }
+* { box-sizing: border-box; }
+:root { --ink: #111827; --muted: #6b7280; --line: #e5e7eb; --card: #ffffff; --bg: #f3f4f6; --dark: #111827; --green: #047857; --green-soft: #d1fae5; --blue: #1d4ed8; --amber: #b45309; }
+body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, Helvetica, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.5; }
+a { color: var(--blue); }
+header { background: var(--dark); color: #fff; padding: 28px 24px 24px; }
+header .wrap, main .wrap { max-width: 1180px; margin: 0 auto; }
+header h1 { margin: 0 0 6px; font-size: 34px; line-height: 1.15; letter-spacing: -0.5px; }
+header p.sub { margin: 0; font-size: 17px; color: #d1d5db; max-width: 760px; }
+header .meta { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+header .meta span { background: #1f2937; border: 1px solid #374151; color: #e5e7eb; padding: 6px 10px; border-radius: 999px; font-size: 13px; }
+main { padding: 24px; }
+.wrap { max-width: 1180px; margin: 0 auto; }
+.grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 20px; align-items: start; }
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.panel h2 { margin: 0 0 4px; font-size: 21px; }
+.panel p.lead { margin: 0 0 14px; color: var(--muted); font-size: 15px; }
+.status { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; border-radius: 10px; padding: 10px 12px; font-size: 14px; margin: 0 0 14px; }
+.status.live { background: var(--green-soft); border-color: #6ee7b7; color: #065f46; }
+#chat { min-height: 300px; max-height: 460px; overflow-y: auto; padding: 6px 2px; }
+.msg { max-width: 88%; padding: 11px 14px; border-radius: 14px; margin: 10px 0; font-size: 16px; line-height: 1.45; }
+.msg.you { background: var(--dark); color: #fff; margin-left: auto; border-bottom-right-radius: 4px; }
+.msg.bot { background: #f3f4f6; border: 1px solid var(--line); margin-right: auto; border-bottom-left-radius: 4px; }
+.msg .who { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; opacity: 0.7; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.chip { border: 1px solid #d1d5db; background: #fff; border-radius: 999px; padding: 8px 12px; font-size: 14px; cursor: pointer; }
+.chip:hover { border-color: var(--dark); }
+.composer { display: flex; gap: 10px; margin-top: 12px; }
+.composer input[type=text] { flex: 1; padding: 13px 14px; font-size: 16px; border: 1px solid #d1d5db; border-radius: 12px; }
+button { cursor: pointer; font-size: 15px; border-radius: 12px; border: 1px solid transparent; padding: 12px 16px; font-weight: 650; }
+.btn-dark { background: var(--dark); color: #fff; }
+.btn-light { background: #fff; border-color: #d1d5db; color: var(--ink); }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.upload { margin-top: 14px; border: 1px dashed #9ca3af; border-radius: 12px; padding: 12px; font-size: 14px; color: var(--muted); }
+.upload input { margin-top: 6px; }
+img.preview { max-width: 100%; max-height: 220px; display: block; margin-top: 10px; border-radius: 10px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0; }
+.stat { background: #f9fafb; border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+.stat .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; }
+.stat .value { font-size: 24px; font-weight: 800; margin-top: 2px; }
+.receipt { border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin: 10px 0; display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+.receipt .name { font-weight: 800; font-size: 17px; }
+.receipt .date { color: var(--muted); font-size: 14px; }
+.receipt .amount { font-weight: 800; font-size: 20px; white-space: nowrap; }
+.receipt .items { font-size: 13px; color: var(--muted); }
+.receipt button { padding: 8px 12px; font-size: 13px; margin-top: 8px; }
+.bar-row { display: grid; grid-template-columns: 110px 1fr 62px; gap: 10px; align-items: center; font-size: 14px; margin: 8px 0; }
+.bar { height: 10px; background: #e5e7eb; border-radius: 999px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--green); }
+.bar.target i { background: #1d4ed8; }
+.bar.starbucks i { background: var(--amber); }
+.total-row { display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 12px; margin-top: 14px; font-size: 17px; font-weight: 800; }
+.steps { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 14px 16px; margin-top: 16px; font-size: 15px; }
+footer { max-width: 1180px; margin: 0 auto; padding: 0 24px 28px; color: var(--muted); font-size: 14px; }
+body.big { font-size: 19px; }
+body.big #chat { font-size: 19px; max-height: 560px; }
+body.big .msg { font-size: 19px; }
+body.big header h1 { font-size: 42px; }
+body.big .composer input[type=text] { font-size: 19px; padding: 16px; }
+@media (max-width: 860px) {
+  header h1 { font-size: 28px; }
+  .grid { grid-template-columns: 1fr; }
+  main { padding: 16px; }
+  .stats { grid-template-columns: 1fr 1fr 1fr; }
+}
 </style>
 </head>
 <body>
+<header>
+<div class="wrap">
 <h1>Personal Expense Assistant</h1>
-<p>Khagendra Khatri<br>
-Nov 17, 2026<br>
-CS663 Computer Vision<br>
-Part 3, Option 3</p>
-
-<p>I built this with the Google Agent Development Kit and Gemini 2.5 Flash. I upload a receipt photo, the agent reads the store, date, items and total, and saves it. Then I can ask how much I spent, at one store or in total.</p>
-
-<p class="note" id="status">Status: this page first tries the live backend. If the live call fails, it shows the sample answer below and says so. No API key is in this page.</p>
-
-<h2>Chat</h2>
-<div id="chat"><p><b>Assistant:</b> Hi. Upload a receipt, or try a sample below.</p></div>
+<p class="sub">I built this with the Google Agent Development Kit and Gemini 2.5 Flash. I upload a receipt photo, the agent reads the store, date, items and total, and saves it. Then I can ask how much I spent, at one store or in total.</p>
+<div class="meta"><span>Khagendra Khatri</span><span>Nov 17, 2026</span><span>CS663 Computer Vision</span><span>Part 3, Option 3</span></div>
+</div>
+</header>
+<main>
+<div class="wrap">
+<div class="grid">
+<section class="panel" aria-label="Chat">
+<h2>Chat with the agent</h2>
+<p class="lead">Upload a receipt, or tap a sample below.</p>
+<p class="status" id="status">Status: this page first tries the live backend. If the live call fails, it shows the sample answer and says so. No API key is in this page.</p>
+<div id="chat"></div>
+<div class="chips">
+<button class="chip" onclick="askChip('Please store this receipt')">Please store this receipt</button>
+<button class="chip" onclick="askChip('How much did I spend at Target?')">How much did I spend at Target?</button>
+<button class="chip" onclick="askChip('What is my total spending in November?')">What is my total spending in November?</button>
+</div>
+<div class="composer">
 <input type="text" id="msg" placeholder="Type a question, for example: What is my total spending in November?">
-<p>
-<button onclick="sendMsg()">Send</button>
-<button onclick="showReceipts()">Show stored receipts</button>
-</p>
-<p>
-<label>Receipt photo: <input type="file" id="img" accept="image/*"></label>
+<button class="btn-dark" onclick="sendMsg()">Send</button>
+</div>
+<div class="toolbar">
+<button class="btn-light" onclick="showReceipts()">Show stored receipts</button>
+<button class="btn-light" onclick="clearChat()">Clear chat</button>
+<button class="btn-light" onclick="toggleBig()">Big screen mode</button>
+</div>
+<div class="upload">
+<label for="img"><b>Receipt photo</b><br>Choose a receipt image, then type a message and press Send.</label>
+<input type="file" id="img" accept="image/*">
 <img class="preview" id="preview" alt="">
-</p>
-
-<h2>Sample receipts</h2>
-<p>Tap one to run it through the demo.</p>
-<button onclick="runSample('target')">Target, Nov 14, 2026, $87.20</button>
-<button onclick="runSample('trader')">Trader Joe's, Nov 10, 2026, $42.18</button>
-<button onclick="runSample('starbucks')">Starbucks, Nov 12, 2026, $6.45</button>
-
+</div>
+</section>
+<aside class="panel" aria-label="Ledger">
 <h2>Stored receipts</h2>
-<table>
-<tr><th>Store</th><th>Date</th><th>Items</th><th>Total</th></tr>
-<tr><td>Trader Joe's</td><td>2026-11-10</td><td>6</td><td>$42.18</td></tr>
-<tr><td>Starbucks</td><td>2026-11-12</td><td>2</td><td>$6.45</td></tr>
-<tr><td>Target</td><td>2026-11-14</td><td>5</td><td>$87.20</td></tr>
-<tr><td><b>Total, November 2026</b></td><td></td><td><b>3 receipts</b></td><td><b>$135.83</b></td></tr>
-</table>
-
-<h2>Demo steps</h2>
-<p>1. Tap Target above, or upload its receipt photo.<br>
+<p class="lead">November 2026, 3 receipts saved.</p>
+<div class="stats">
+<div class="stat"><div class="label">Total</div><div class="value">$135.83</div></div>
+<div class="stat"><div class="label">Average</div><div class="value">$45.28</div></div>
+<div class="stat"><div class="label">Count</div><div class="value">3</div></div>
+</div>
+<div class="receipt">
+<div><div class="name">Target</div><div class="date">Nov 14, 2026</div><div class="items">5 items</div><button class="btn-light" onclick="runSample('target')">Run through agent</button></div>
+<div class="amount">$87.20</div>
+</div>
+<div class="receipt">
+<div><div class="name">Trader Joe's</div><div class="date">Nov 10, 2026</div><div class="items">6 items</div><button class="btn-light" onclick="runSample('trader')">Run through agent</button></div>
+<div class="amount">$42.18</div>
+</div>
+<div class="receipt">
+<div><div class="name">Starbucks</div><div class="date">Nov 12, 2026</div><div class="items">2 items</div><button class="btn-light" onclick="runSample('starbucks')">Run through agent</button></div>
+<div class="amount">$6.45</div>
+</div>
+<h2 style="margin-top: 20px;">Spending by store</h2>
+<div class="bar-row"><span>Target</span><div class="bar target"><i style="width: 100%;"></i></div><span>$87.20</span></div>
+<div class="bar-row"><span>Trader Joe's</span><div class="bar"><i style="width: 48%;"></i></div><span>$42.18</span></div>
+<div class="bar-row"><span>Starbucks</span><div class="bar starbucks"><i style="width: 7%;"></i></div><span>$6.45</span></div>
+<div class="total-row"><span>2026-11</span><span>$135.83</span></div>
+<div class="steps">
+<b>Demo steps</b><br>
+1. Tap Target above, or upload its receipt photo.<br>
 2. Ask: How much did I spend at Target?<br>
-3. Ask: What is my total spending in November?</p>
-
-<h2>Links</h2>
+3. Ask: What is my total spending in November?
+</div>
+</aside>
+</div>
+</div>
+</main>
+<footer>
 <p>Live backend (Cloud Run): <a href="https://cs663-expense-assistant-htdn76co5a-uc.a.run.app/health">https://cs663-expense-assistant-htdn76co5a-uc.a.run.app</a><br>
 Code on GitHub: <a href="https://github.com/Khagendra01/cs663-part3-expense-assistant">https://github.com/Khagendra01/cs663-part3-expense-assistant</a></p>
-
-<p>Note on the live backend: the backend has no CORS set up, so a page on github.io cannot call its /chat endpoint from a browser. The live backend itself works, and /health returns ok. This page tries the live call first and falls back to the sample answer when the browser blocks it.</p>
-
+<p>Note on the live backend: the backend is being updated to allow cross-site calls from this page. Until that redeploy is live, the browser blocks the live call, and this page shows the sample answer and says so. The live backend itself works, and /health returns ok.</p>
+</footer>
 <script>
 var BACKEND = "https://cs663-expense-assistant-htdn76co5a-uc.a.run.app";
 var samples = {
@@ -74,12 +154,21 @@ var samples = {
   trader: {store: "Trader Joe's", date: "2026-11-10", total: 42.18, items: 6, text: "Stored Trader Joe's, Nov 10, 2026, $42.18, 6 items."},
   starbucks: {store: "Starbucks", date: "2026-11-12", total: 6.45, items: 2, text: "Stored Starbucks, Nov 12, 2026, $6.45, 2 items."}
 };
-function addMsg(who, text) {
+function escapeHtml(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+function addMsg(who, text, cls) {
   var c = document.getElementById("chat");
-  var p = document.createElement("p");
-  p.innerHTML = "<b>" + who + ":</b> " + text;
-  c.appendChild(p);
+  var d = document.createElement("div");
+  d.className = "msg " + cls;
+  d.innerHTML = "<span class='who'>" + who + "</span>" + escapeHtml(text);
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
 }
+function setStatus(text, live) {
+  var s = document.getElementById("status");
+  s.textContent = text;
+  s.className = live ? "status live" : "status";
+}
+addMsg("Assistant", "Hi. Upload a receipt, or try a sample below.", "bot");
 function sampleAnswer(q) {
   q = q.toLowerCase();
   if (q.indexOf("target") !== -1) return "You spent $87.20 at Target, on Nov 14, 2026, 5 items.";
@@ -101,7 +190,7 @@ async function sendMsg() {
   var input = document.getElementById("msg");
   var q = input.value.trim();
   if (!q) return;
-  addMsg("You", q);
+  addMsg("You", q, "you");
   input.value = "";
   var file = document.getElementById("img").files[0];
   var b64 = null, name = null;
@@ -116,29 +205,39 @@ async function sendMsg() {
   }
   try {
     var reply = await tryLive(q, b64, name);
-    document.getElementById("status").textContent = "Status: live backend answered.";
-    addMsg("Assistant (live)", reply);
+    setStatus("Status: live backend answered.", true);
+    addMsg("Assistant (live)", reply, "bot");
   } catch (e) {
-    document.getElementById("status").textContent = "Status: live backend call failed from this page (the backend blocks cross-site browser calls), so this is the sample answer.";
-    addMsg("Assistant (sample answer, live call failed)", sampleAnswer(q));
+    setStatus("Status: live backend call failed from this page, so this is the sample answer.", false);
+    addMsg("Assistant (sample answer, live call failed)", sampleAnswer(q), "bot");
   }
 }
+function askChip(q) { document.getElementById("msg").value = q; sendMsg(); }
 async function runSample(key) {
   var s = samples[key];
-  addMsg("You", "Please store this receipt");
+  addMsg("You", "Please store this receipt", "you");
   try {
     var reply = await tryLive("Please store this receipt", null, null);
-    document.getElementById("status").textContent = "Status: live backend answered.";
-    addMsg("Assistant (live)", reply);
+    setStatus("Status: live backend answered.", true);
+    addMsg("Assistant (live)", reply, "bot");
   } catch (e) {
-    document.getElementById("status").textContent = "Status: live backend call failed from this page (the backend blocks cross-site browser calls), so this is the sample answer.";
-    addMsg("Assistant (sample answer, live call failed)", s.text);
+    setStatus("Status: live backend call failed from this page, so this is the sample answer.", false);
+    addMsg("Assistant (sample answer, live call failed)", s.text, "bot");
   }
 }
 function showReceipts() {
-  addMsg("Assistant (sample answer)", "Stored receipts: Trader Joe's $42.18, Starbucks $6.45, Target $87.20. Total $135.83.");
+  addMsg("Assistant (sample answer)", "Stored receipts: Trader Joe's $42.18, Starbucks $6.45, Target $87.20. Total $135.83.", "bot");
 }
+function clearChat() {
+  document.getElementById("chat").innerHTML = "";
+  addMsg("Assistant", "Hi. Upload a receipt, or try a sample below.", "bot");
+}
+function toggleBig() { document.body.classList.toggle("big"); }
 document.getElementById("msg").addEventListener("keydown", function(e) { if (e.key === "Enter") sendMsg(); });
+document.getElementById("img").addEventListener("change", function(e) {
+  var f = e.target.files[0];
+  if (f) document.getElementById("preview").src = URL.createObjectURL(f);
+});
 </script>
 </body>
 </html>
